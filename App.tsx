@@ -5,11 +5,19 @@ import {
   StyleSheet,
   Text
 } from 'react-native';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/homeRedux/Store';
+//import store from './src/redux/homeRedux/Store';
 import StackNavigator from './src/navigators/StackNavigator/StackNavigator';
+import UserContextProvider from './src/ContextProvider/userContext/UserContextProvider';
 function App(): React.JSX.Element {
   
   return (
-   <StackNavigator></StackNavigator>
+    <Provider store={store}>
+    <UserContextProvider>
+    <StackNavigator></StackNavigator>
+   </UserContextProvider>
+   </Provider>
   );
 }
 

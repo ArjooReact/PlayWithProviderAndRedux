@@ -3,11 +3,13 @@ import { LoginScreenTypes } from './LoginScreenType'
 import { useNavigation, ParamListBase,  NavigationProp } from '@react-navigation/native';
 import { SafeAreaView,StyleSheet,Text,Button,TextInput, View,Alert } from 'react-native'
 import CheckBox from '@react-native-community/checkbox';
+import { useUserContext } from '../../ContextProvider/contextHooks/useUserContext';
 const LoginScreen:React.FC<LoginScreenTypes>=()=>{
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const navigation: NavigationProp<ParamListBase> = useNavigation();
     const [userName,setUserName]=useState('')
     const [passWord,setPassword]=useState('')
+    const { user, setUser } = useUserContext();
     const doValidation=()=>{
         if(userName===''){
           Alert.alert('Please Enter UserName!!')
@@ -16,11 +18,13 @@ const LoginScreen:React.FC<LoginScreenTypes>=()=>{
             Alert.alert('Please Enter Password')
         }
        else{
+        setUser({ userName: userName, passWord: passWord });
+        console.log('UserName:::',user?.userName)
         navigation.navigate('DashBoard')
        }
     }
     return(<SafeAreaView style={style.mainContainer}>
-        <Text>LogIn</Text>
+        <Text>{user?.userName}</Text>
    <TextInput
    style={style.inputStyles}
    value={userName}
