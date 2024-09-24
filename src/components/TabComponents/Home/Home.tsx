@@ -10,20 +10,26 @@ const Home:React.FC<HomeType>=({title})=>{
     const data= useSelector((state:RootState)=>{
         return state.counter.value
     })
-    const { user, setUser } = useUserContext();
+    const state1=useSelector(state=>{
+        return state
+    })
+    //console.log('WholeState:::',state1)
+    //const { user, setUser } = useUserContext();
     const [count,setCount]=useState(0)
 return(<SafeAreaView style={styles.mainContainer}>
-<Text>{user?.userName}</Text>
+{/* <Text>{user?.userName}</Text> */}
+<Text>{1}</Text>
 <View style={styles.buttonContainerView}>
     <Button
     title='Inc'
     onPress={()=>{
        // setCount(count+1)
-       console.log('clicked:::',data)
+       //console.log('clicked:::',data)
         dispatch(increament())
     }}
     ></Button>
     <Text>{data}</Text>
+    {/* <Text>{1}</Text> */}
     <Button
     title='Dec'
     onPress={()=>{
