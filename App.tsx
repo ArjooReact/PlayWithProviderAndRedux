@@ -10,13 +10,22 @@ import { store } from './src/redux/homeRedux/Store';
 //import store from './src/redux/homeRedux/Store';
 import StackNavigator from './src/navigators/StackNavigator/StackNavigator';
 import UserContextProvider from './src/ContextProvider/userContext/UserContextProvider';
+import LoginContextProvider from './src/ContextProvider/userContext/LoginContextProvider';
+import { PersistGate } from 'redux-persist/integration/react';
+import {persistor} from './src/redux/homeRedux/Store'
 function App(): React.JSX.Element {
   
   return (
     <Provider store={store}>
-    <UserContextProvider>
+        <PersistGate loading={<Text style={{alignSelf:'center',marginTop:60}}>Loading....</Text>} persistor={persistor}> 
+       <LoginContextProvider>
+    <UserContextProvider> 
+   
     <StackNavigator></StackNavigator>
-   </UserContextProvider>
+   
+    </UserContextProvider>
+   </LoginContextProvider>
+    </PersistGate> 
    </Provider>
   );
 }

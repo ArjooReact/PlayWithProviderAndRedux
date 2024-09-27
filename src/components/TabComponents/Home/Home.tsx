@@ -1,11 +1,22 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import { StyleSheet,SafeAreaView,Text,Button,View } from 'react-native'
 import { useSelector,useDispatch } from 'react-redux'
 import { HomeType } from './HomeType'
 import { useUserContext } from '../../../ContextProvider/contextHooks/useUserContext'
 import { RootState } from '../../../redux/homeRedux/Store'
+import { getDataFromLocalStorage } from '../../../utils/localStorage'
 import { increament,decreament } from '../../../redux/homeRedux/homeSlice'
+var rememberMe:any=''
 const Home:React.FC<HomeType>=({title})=>{
+
+    useEffect(()=>{
+    getRememberMe()
+    console.log('rememberMe:::',rememberMe)
+    },[])
+
+    const getRememberMe= async()=>{
+        rememberMe=await getDataFromLocalStorage('ISLOGGEDIN')
+    }
     const dispatch=useDispatch()
     const data= useSelector((state:RootState)=>{
         return state.counter.value
@@ -19,6 +30,7 @@ const Home:React.FC<HomeType>=({title})=>{
 return(<SafeAreaView style={styles.mainContainer}>
 {/* <Text>{user?.userName}</Text> */}
 <Text>{1}</Text>
+<Text>{rememberMe}</Text>
 <View style={styles.buttonContainerView}>
     <Button
     title='Inc'

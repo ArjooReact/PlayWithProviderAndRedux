@@ -22,6 +22,8 @@ const Product:React.FC<ProductTypes>=()=>{
   //   return res
   // }
   const state1=useSelector(state=>{
+    //let arrr=state.pokemonApi.queries.results[0]
+    //console.log('ARRRAYY:::::',arrr)
     return state
 })
     useEffect(()=>{
@@ -29,10 +31,12 @@ const Product:React.FC<ProductTypes>=()=>{
         // if(final.isLoading){
         //   console.log('Loading:mmm:final::',final.data)
         // }
+       // console.log('Loading:mmm:final2666::',finalData)
      console.log('STATE FROM PRODUCTS::::::',state1)
+     console.log('LENGTH OF ARRAY::::',state1)
         setIsLoading(finalData.isLoading)
-        //console.log('Loading:mmm:final::',final.data)
-        console.log('Loading:mmm:final2666::',finalData)
+      console.log('Loading:mmm:final::',final.data)
+ 
     },[])
    
     

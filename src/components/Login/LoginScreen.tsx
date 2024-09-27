@@ -1,15 +1,55 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import { LoginScreenTypes } from './LoginScreenType'
 import { useNavigation, ParamListBase,  NavigationProp } from '@react-navigation/native';
 import { SafeAreaView,StyleSheet,Text,Button,TextInput, View,Alert } from 'react-native'
 import CheckBox from '@react-native-community/checkbox';
 import { useUserContext } from '../../ContextProvider/contextHooks/useUserContext';
+import { useLoginContext } from '../../ContextProvider/contextHooks/useLoginContext';
+import { updateUserName,updateUserPassword } from '../../redux/homeRedux/loginSlice';
+import { useDispatch, useSelector} from 'react-redux';
+import { useGetLoginPostMutation } from '../../api/GetLoginApi';
+import { saveDataInLocalStorage, getDataFromLocalStorage } from '../../utils/localStorage';
+import * as Progress from 'react-native-progress';
+// Important Link for
+//https://dummyjson.com/docs/auth
 const LoginScreen:React.FC<LoginScreenTypes>=()=>{
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const navigation: NavigationProp<ParamListBase> = useNavigation();
     const [userName,setUserName]=useState('')
     const [passWord,setPassword]=useState('')
+    const [isLoading,setIsLoading]=useState(false)
     const { user, setUser } = useUserContext();
+   const {loggedIn, setIsLoggedIn}= useLoginContext()
+    var isLoggedIn:any=''
+    const [createUser] = useGetLoginPostMutation()
+    let dispatch = useDispatch();
+
+    useEffect(()=>{
+      checkIsLoggedIn()
+      console.log('is_logged_in_effect:::',isLoggedIn)
+      console.log('loggedIn trueddd',loggedIn?.isLoggedIn)
+
+      // condition with contextApi
+      if(loggedIn?.isLoggedIn=='true'){
+        console.log('loggedIn true')
+        navigation.navigate('DashBoard')
+      }
+     // condition with AsyncStorage
+     if(isLoggedIn=='"true1"'){
+      console.log('loggedIn From Async::',isLoggedIn)
+      navigation.navigate('DashBoard')
+    }
+      
+    },[])
+    const checkIsLoggedIn= async()=>{
+      isLoggedIn= await getDataFromLocalStorage('ISLOGGEDIN')
+      //console.log('REMEMBER_ME',isLoggedIn)
+      if(isLoggedIn=='true'){
+        console.log('inside true condition')
+        navigation.navigate('DashBoard')
+      }
+      return isLoggedIn
+    }
     const doValidation=()=>{
         if(userName===''){
           Alert.alert('Please Enter UserName!!')
@@ -18,12 +58,34 @@ const LoginScreen:React.FC<LoginScreenTypes>=()=>{
             Alert.alert('Please Enter Password')
         }
        else{
+       
         setUser({ userName: userName, passWord: passWord });
+        setIsLoading(true)
         console.log('UserName:::',user?.userName)
+        dispatch(updateUserName(userName))
+        dispatch(updateUserPassword(passWord))
+        createUser({
+            "username": "emilys",
+            "password": "emilyspass"
+            // expiresInMins: 60, // optional
+          }).unwrap().then((response)=>{
+            console.log('LOGIN_RESPONSEcccc:::::::',response.accessToken)
+            saveDataInLocalStorage('TOKEN',response.accessToken)
+            saveDataInLocalStorage('ISLOGGEDIN',"true1")
+            console.log('loggedIn From Async2::',isLoggedIn)
+            setIsLoggedIn({isLoggedIn:'false'})
+            setIsLoading(false)
+          }).catch((error)=>{
+             console.log('ERROR:::::',error)
+          })
+
         navigation.navigate('DashBoard')
-       }
+       
+      }
     }
     return(<SafeAreaView style={style.mainContainer}>
+        {isLoading? (    <Progress.Circle size={30} indeterminate={true}/>):(null)}
+     
         <Text>{user?.userName}</Text>
    <TextInput
    style={style.inputStyles}
