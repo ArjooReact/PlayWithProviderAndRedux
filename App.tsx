@@ -13,8 +13,8 @@ import UserContextProvider from './src/ContextProvider/userContext/UserContextPr
 import LoginContextProvider from './src/ContextProvider/userContext/LoginContextProvider';
 import { PersistGate } from 'redux-persist/integration/react';
 import {persistor} from './src/redux/homeRedux/Store'
+import { useSelector } from 'react-redux'
 function App(): React.JSX.Element {
-  
   return (
     <Provider store={store}>
         <PersistGate loading={<Text style={{alignSelf:'center',marginTop:60}}>Loading....</Text>} persistor={persistor}> 

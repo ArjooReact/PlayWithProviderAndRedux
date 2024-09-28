@@ -2,8 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const saveDataInLocalStorage = async (KEY:any, VALUE:any) => {
     let data = JSON.stringify(VALUE);
-    console.log('datuu after save::',data)
-    console.log('val::::'+VALUE)
+    //console.log('datuu after save::',data)
+    //console.log('val::::'+VALUE)
   try {
     await AsyncStorage.setItem(KEY, data);
   } catch (error) {
@@ -17,7 +17,7 @@ export const getDataFromLocalStorage = async (KEY:any) => {
     if (value !== null) {
         //value = JSON.parse(value);
       return value;
-      console.log(value);
+      //console.log(value);
     }
   } catch (error) {
     console.error(error);

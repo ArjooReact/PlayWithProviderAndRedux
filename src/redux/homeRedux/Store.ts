@@ -71,9 +71,10 @@ export const store = configureStore({
 //   // and other useful features of `rtk-query`.
 //   middleware: (getDefaultMiddleware) =>
 //     getDefaultMiddleware().concat(getProductApiCall.middleware).concat(getProductListingApiCall.middleware).concat(getAllTypeMasterProduct.middleware).concat(getLogingApiCall.middleware),
-
+// })
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
 // see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
+/// On commenting this only line redux stops persists data//
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>
 setupListeners(store.dispatch)

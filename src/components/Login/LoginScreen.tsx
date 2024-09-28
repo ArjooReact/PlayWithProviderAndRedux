@@ -1,11 +1,12 @@
 import React,{useState,useEffect} from 'react'
+//import { useSelector } from 'react-redux'
 import { LoginScreenTypes } from './LoginScreenType'
 import { useNavigation, ParamListBase,  NavigationProp } from '@react-navigation/native';
 import { SafeAreaView,StyleSheet,Text,Button,TextInput, View,Alert } from 'react-native'
 import CheckBox from '@react-native-community/checkbox';
 import { useUserContext } from '../../ContextProvider/contextHooks/useUserContext';
 import { useLoginContext } from '../../ContextProvider/contextHooks/useLoginContext';
-import { updateUserName,updateUserPassword } from '../../redux/homeRedux/loginSlice';
+import { updateUserName,updateUserPassword,updateLoggedInStatus} from '../../redux/homeRedux/loginSlice';
 import { useDispatch, useSelector} from 'react-redux';
 import { useGetLoginPostMutation } from '../../api/GetLoginApi';
 import { saveDataInLocalStorage, getDataFromLocalStorage } from '../../utils/localStorage';
@@ -19,27 +20,35 @@ const LoginScreen:React.FC<LoginScreenTypes>=()=>{
     const [passWord,setPassword]=useState('')
     const [isLoading,setIsLoading]=useState(false)
     const { user, setUser } = useUserContext();
-   const {loggedIn, setIsLoggedIn}= useLoginContext()
+    const {loggedIn, setIsLoggedIn}= useLoginContext()
     var isLoggedIn:any=''
     const [createUser] = useGetLoginPostMutation()
     let dispatch = useDispatch();
-
+    let asyncData = useSelector((state:any)=>{
+      return state.userCredentials
+    })
     useEffect(()=>{
-      checkIsLoggedIn()
-      console.log('is_logged_in_effect:::',isLoggedIn)
-      console.log('loggedIn trueddd',loggedIn?.isLoggedIn)
+      //checkIsLoggedIn()
+      // console.log('is_logged_in_effect:::',isLoggedIn)
+      // console.log('loggedIn trueddd',loggedIn?.isLoggedIn)
 
       // condition with contextApi
-      if(loggedIn?.isLoggedIn=='true'){
-        console.log('loggedIn true')
-        navigation.navigate('DashBoard')
-      }
+      // if(loggedIn?.isLoggedIn=='true'){
+      //   console.log('loggedIn true')
+      //   navigation.navigate('DashBoard')
+      // }
      // condition with AsyncStorage
-     if(isLoggedIn=='"true1"'){
-      console.log('loggedIn From Async::',isLoggedIn)
-      navigation.navigate('DashBoard')
-    }
-      
+    //  if(isLoggedIn=='"true1"'){
+    //   console.log('loggedIn From Async::',isLoggedIn)
+    //   navigation.navigate('DashBoard')
+    // }
+
+    /// condition with ReduxPersistts
+     
+    // if(JSON.stringify(asyncData.userData.isLoggedIn)){
+    //  // console.log('loggedIn From Async::',isLoggedIn)
+    //   navigation.navigate('DashBoard')
+    // }
     },[])
     const checkIsLoggedIn= async()=>{
       isLoggedIn= await getDataFromLocalStorage('ISLOGGEDIN')
@@ -72,6 +81,7 @@ const LoginScreen:React.FC<LoginScreenTypes>=()=>{
             console.log('LOGIN_RESPONSEcccc:::::::',response.accessToken)
             saveDataInLocalStorage('TOKEN',response.accessToken)
             saveDataInLocalStorage('ISLOGGEDIN',"true1")
+            dispatch(updateLoggedInStatus(true))
             console.log('loggedIn From Async2::',isLoggedIn)
             setIsLoggedIn({isLoggedIn:'false'})
             setIsLoading(false)

@@ -2,16 +2,16 @@ import React,{useState,useEffect} from 'react'
 import { StyleSheet,SafeAreaView,Text,Button,View } from 'react-native'
 import { useSelector,useDispatch } from 'react-redux'
 import { HomeType } from './HomeType'
+import { useNavigation, ParamListBase,  NavigationProp } from '@react-navigation/native';
 import { useUserContext } from '../../../ContextProvider/contextHooks/useUserContext'
 import { RootState } from '../../../redux/homeRedux/Store'
 import { getDataFromLocalStorage } from '../../../utils/localStorage'
 import { increament,decreament } from '../../../redux/homeRedux/homeSlice'
 var rememberMe:any=''
 const Home:React.FC<HomeType>=({title})=>{
-
+    const navigation: NavigationProp<ParamListBase> = useNavigation();
     useEffect(()=>{
-    getRememberMe()
-    console.log('rememberMe:::',rememberMe)
+        console.log('CALLING FROM HOME_TAB_COMPONENT')
     },[])
 
     const getRememberMe= async()=>{
@@ -24,8 +24,6 @@ const Home:React.FC<HomeType>=({title})=>{
     const state1=useSelector(state=>{
         return state
     })
-    //console.log('WholeState:::',state1)
-    //const { user, setUser } = useUserContext();
     const [count,setCount]=useState(0)
 return(<SafeAreaView style={styles.mainContainer}>
 {/* <Text>{user?.userName}</Text> */}
@@ -40,6 +38,7 @@ return(<SafeAreaView style={styles.mainContainer}>
         dispatch(increament())
     }}
     ></Button>
+   
     <Text>{data}</Text>
     {/* <Text>{1}</Text> */}
     <Button
@@ -51,6 +50,12 @@ return(<SafeAreaView style={styles.mainContainer}>
     }}
     ></Button>
 </View>
+<Button
+    title='Go To Registration Screen'
+    onPress={()=>{
+       navigation.navigate('Registration')
+    }}
+    ></Button>
 <View>
 
 </View>
