@@ -4,10 +4,7 @@ import { RegistrationType } from './RegistrationType'
 import { useGetDataQuery,useGetDataByIdQuery } from '../../api/GetAllApi'
 
 const Registration:React.FC<RegistrationType>=({title})=>{
-    const {data, isLoading, isFetching} = useGetDataQuery('',{
-        pollingInterval: 300,
-        skipPollingIfUnfocused: true,
-      });
+    const {data, isLoading, isFetching} = useGetDataQuery('',{ refetchOnMountOrArgChange: true });
     useEffect(()=>{
       console.log('CALLING_FROM_REGISTRATION_SCREEN')
       console.log('IS_FETCHING_FROM_REGISTRATION:::',isFetching)
