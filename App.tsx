@@ -12,6 +12,7 @@ import { getDataFromLocalStorage } from './src/storage/AsyncStorage/Asyncstorage
 import StackNavigatorLoggedOut from './src/navigators/StackNavigator/StackNavigatorLoggedOut';
 import StackNavigatorLoggedIn from './src/navigators/StackNavigator/StackNavigatorLoggedIn';
 import UserContextProvider from './src/ContextProvider/userContext/UserContextProvider';
+import UserDataContextProvider from './src/storage/ContextproviderStorage/userContext/UseDataContextProvider';
 function App(): React.JSX.Element {
     const[loggedIn,setIsLoggedIn]=useState(true)
    // let isLogged:any
@@ -37,10 +38,12 @@ function App(): React.JSX.Element {
   },[])
   return (
     <Provider store={store}>
+      <UserDataContextProvider>
     <UserContextProvider>
       {/* <StackNavigator isLoggedIn={loggedIn}></StackNavigator> */}
     {loggedIn?(<StackNavigatorLoggedIn></StackNavigatorLoggedIn>):(<StackNavigatorLoggedOut></StackNavigatorLoggedOut>)}
    </UserContextProvider>
+   </UserDataContextProvider>
    </Provider>
   );
 }

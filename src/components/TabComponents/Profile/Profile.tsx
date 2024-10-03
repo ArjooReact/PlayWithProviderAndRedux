@@ -5,8 +5,9 @@ import {getDataFromLocalStorage,clearAsyncStorage,saveDataInLocalStorage} from '
 import { saveCredentialsUsingKeychain,flushCredentials,getCredentialsUsingKeychain,getCredentials } from '../../../storage/KeychainStorage/Keychain';
 import {GLOBAL_USER_NAME} from '../../../storage/KeychainStorage/Keychain';
 import {useState, useEffect} from 'react';
-
+import { useUserDataContext } from '../../../storage/ContextproviderStorage/contextHooks/useUserDataContext';
 const Profile: React.FC<ProfileType> = () => {
+  const { user, setUser } = useUserDataContext();
   const [userNameAsync, setUserNameAsync] = useState();
   const [tokenAsync, setTokenAsync] = useState();
   const [loggdStatusAsync, setLoggedStatusAsync] = useState();
@@ -17,9 +18,22 @@ const Profile: React.FC<ProfileType> = () => {
   const [loggdStatusKeyChain, setLoggedStatusKeyChain] = useState(false);
   const [passWordKeyChain, setpassWordKeyChain] = useState('');
 
+  const [userNameProvider, setUserNameProvider] = useState<any>('');
+  const [tokenProvider, setTokenProvider] = useState<any>('');
+  const [loggdStatusProvider, setLoggedStatusProvider] = useState<any>(false);
+  const [passWordProvider, setpassWordKeyProvider] = useState<any>('');
+
   useEffect(()=>{
     getDataFromAsyncStorage()
-    saveCredentialsInKeyChainStorage()
+    getDataFromKeychainStorage()
+    //setUser({})
+    setUser({
+      isloggedIn:true,  
+      userName: 'Rashmi',
+      passWord: '123456',
+      token:'wtnsssddffhbhvhvhvvv'
+    })
+   // saveDataFromContextProvider()
   },[])
   const saveLoggedInCredentialsFromAsyncStorage=()=>{
     saveDataInLocalStorage('IS_LOGGED_IN',true)
@@ -77,6 +91,12 @@ const Profile: React.FC<ProfileType> = () => {
     }
   })
 
+  const saveDataFromContextProvider=()=>{
+    setUserNameProvider(user?.userName)
+    setTokenProvider(user?.token)
+    setLoggedStatusProvider(user?.isloggedIn)
+    setpassWordKeyProvider(user?.passWord)
+  }
   const clearKeychainStorage= ()=>{
     flushCredentials()
     setUserNameKeyChain('')
@@ -171,31 +191,31 @@ const Profile: React.FC<ProfileType> = () => {
         <Text style={styles.fontStyle}>Data From ContextProvider</Text>
         <View style={styles.textSection}>
           <Text style={styles.fontStyle}>UserName :</Text>
-          <Text style={[styles.fontStyle, styles.fontStyle2]}>{userNameKeyChain}</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{userNameProvider}</Text>
         </View>
 
         <View style={styles.textSection}>
           <Text style={styles.fontStyle}>TOKEN :</Text>
-          <Text style={[styles.fontStyle, styles.fontStyle2]}>{tokenKeyChain}</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{tokenProvider}</Text>
         </View>
 
         <View style={styles.textSection}>
           <Text style={styles.fontStyle}>LOGGEDIN STATUS :</Text>
-          <Text style={[styles.fontStyle, styles.fontStyle2]}>{loggdStatusKeyChain}</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{loggdStatusProvider}</Text>
         </View>
 
         <View style={styles.textSection}>
           <Text style={styles.fontStyle}>PASSWORD :</Text>
-          <Text style={[styles.fontStyle, styles.fontStyle2]}>{passWordKeyChain}</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{passWordProvider}</Text>
         </View>
         <Button
-        title='Save KeyChainStorage Data'
+        title='Save ContextProvider Data'
         onPress={()=>{
-          saveCredentialsInKeyChainStorage()
+          saveDataFromContextProvider()
           //getDataFromKeychainStorage()
         }}
         ></Button>
-        <Button
+        {/* <Button
         title='Fetch KeyChainStorage Data'
         onPress={async ()=>{
           getDataFromKeychainStorage()
@@ -208,7 +228,7 @@ const Profile: React.FC<ProfileType> = () => {
           clearKeychainStorage()
          // getDataFromKeychainStorage()
         }}
-        ></Button>
+        ></Button> */}
       </View>
     </SafeAreaView>
     </ScrollView>
