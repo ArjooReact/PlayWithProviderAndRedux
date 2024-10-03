@@ -1,7 +1,8 @@
 import React from 'react';
-import {StyleSheet, Text, SafeAreaView, View, Button} from 'react-native';
+import {StyleSheet, Text, SafeAreaView, View, Button,ScrollView} from 'react-native';
 import {ProfileType} from './ProfileType';
 import {getDataFromLocalStorage,clearAsyncStorage,saveDataInLocalStorage} from '../../../storage/AsyncStorage/Asyncstorage';
+import { saveCredentialsUsingKeychain,flushCredentials,getCredentialsUsingKeychain,getCredentials } from '../../../storage/KeychainStorage/Keychain';
 import {GLOBAL_USER_NAME} from '../../../storage/KeychainStorage/Keychain';
 import {useState, useEffect} from 'react';
 
@@ -11,8 +12,14 @@ const Profile: React.FC<ProfileType> = () => {
   const [loggdStatusAsync, setLoggedStatusAsync] = useState();
   const [passWordAsync, setpassWordAsync] = useState();
 
+  const [userNameKeyChain, setUserNameKeyChain] = useState('');
+  const [tokenKeyChain, setTokenKeychain] = useState('');
+  const [loggdStatusKeyChain, setLoggedStatusKeyChain] = useState(false);
+  const [passWordKeyChain, setpassWordKeyChain] = useState('');
+
   useEffect(()=>{
     getDataFromAsyncStorage()
+    saveCredentialsInKeyChainStorage()
   },[])
   const saveLoggedInCredentialsFromAsyncStorage=()=>{
     saveDataInLocalStorage('IS_LOGGED_IN',true)
@@ -35,7 +42,50 @@ const Profile: React.FC<ProfileType> = () => {
     }
   };
 
+
+  const saveCredentialsInKeyChainStorage= (async ()=>{
+    let userName='Rajveer'
+    let token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+    let server={
+        userName:'Rajveer',
+        loggedInStatus:false,
+        passWord:'876543'
+    }
+    saveCredentialsUsingKeychain(JSON.stringify(server),token)
+    //saveCredentialsUsingKeychain(JSON.stringify(token_obj1),token)
+  })
+
+  const getDataFromKeychainStorage= (async()=>{
+    try{
+    let res= await getCredentialsUsingKeychain()
+    let dataObject=JSON.parse(JSON.stringify(res)).username
+    let token=JSON.parse(JSON.stringify(res)).password
+    let userName=JSON.parse(dataObject).userName
+    let passWord=JSON.parse(dataObject).passWord
+    let isLoggedInStatus=JSON.parse(dataObject).loggedInStatus
+    setUserNameKeyChain(userName)
+    setTokenKeychain(token)
+    setLoggedStatusKeyChain(isLoggedInStatus)
+    setpassWordKeyChain(passWord)
+
+    console.log('Getting KeychainStorage Data:::',token)
+    console.log('Getting KeychainStorage Data:::',userName)
+    console.log('Getting KeychainStorage Data:::',passWord)
+    console.log('Getting KeychainStorage Data:::',isLoggedInStatus)
+    }catch(error){
+      console.log('Error Parse',error)
+    }
+  })
+
+  const clearKeychainStorage= ()=>{
+    flushCredentials()
+    setUserNameKeyChain('')
+    setTokenKeychain('')
+    setLoggedStatusKeyChain(false)
+    setpassWordKeyChain('')
+  }
   return (
+    <ScrollView>
     <SafeAreaView style={styles.mainContainer}>
       <View style={styles.firstContainer}>
         <Text style={styles.fontStyle}>Data From AsyncStorage</Text>
@@ -78,27 +128,90 @@ const Profile: React.FC<ProfileType> = () => {
         <Text style={styles.fontStyle}>Data From KeyChainStorage</Text>
         <View style={styles.textSection}>
           <Text style={styles.fontStyle}>UserName :</Text>
-          <Text style={[styles.fontStyle, styles.fontStyle2]}>UserName</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{userNameKeyChain}</Text>
         </View>
 
         <View style={styles.textSection}>
           <Text style={styles.fontStyle}>TOKEN :</Text>
-          <Text style={[styles.fontStyle, styles.fontStyle2]}>TOKEN</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{tokenKeyChain}</Text>
         </View>
 
         <View style={styles.textSection}>
           <Text style={styles.fontStyle}>LOGGEDIN STATUS :</Text>
-          <Text style={[styles.fontStyle, styles.fontStyle2]}>TRUE</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{loggdStatusKeyChain}</Text>
         </View>
 
         <View style={styles.textSection}>
           <Text style={styles.fontStyle}>PASSWORD :</Text>
-          <Text style={[styles.fontStyle, styles.fontStyle2]}>PASSWORD</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{passWordKeyChain}</Text>
         </View>
+        <Button
+        title='Save KeyChainStorage Data'
+        onPress={()=>{
+          saveCredentialsInKeyChainStorage()
+          //getDataFromKeychainStorage()
+        }}
+        ></Button>
+        <Button
+        title='Fetch KeyChainStorage Data'
+        onPress={async ()=>{
+          getDataFromKeychainStorage()
+          //console.log('resssss',res)
+        }}
+        ></Button>
+         <Button
+        title='Clear KeyChainStorage Data'
+        onPress={()=>{
+          clearKeychainStorage()
+         // getDataFromKeychainStorage()
+        }}
+        ></Button>
       </View>
-      {/* <Text>Profile</Text>
-        <Text>{GLOBAL_USER_NAME}</Text> */}
+      <View style={[styles.secondContainer,styles.thirdContainer]}>
+        <Text style={styles.fontStyle}>Data From ContextProvider</Text>
+        <View style={styles.textSection}>
+          <Text style={styles.fontStyle}>UserName :</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{userNameKeyChain}</Text>
+        </View>
+
+        <View style={styles.textSection}>
+          <Text style={styles.fontStyle}>TOKEN :</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{tokenKeyChain}</Text>
+        </View>
+
+        <View style={styles.textSection}>
+          <Text style={styles.fontStyle}>LOGGEDIN STATUS :</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{loggdStatusKeyChain}</Text>
+        </View>
+
+        <View style={styles.textSection}>
+          <Text style={styles.fontStyle}>PASSWORD :</Text>
+          <Text style={[styles.fontStyle, styles.fontStyle2]}>{passWordKeyChain}</Text>
+        </View>
+        <Button
+        title='Save KeyChainStorage Data'
+        onPress={()=>{
+          saveCredentialsInKeyChainStorage()
+          //getDataFromKeychainStorage()
+        }}
+        ></Button>
+        <Button
+        title='Fetch KeyChainStorage Data'
+        onPress={async ()=>{
+          getDataFromKeychainStorage()
+          //console.log('resssss',res)
+        }}
+        ></Button>
+         <Button
+        title='Clear KeyChainStorage Data'
+        onPress={()=>{
+          clearKeychainStorage()
+         // getDataFromKeychainStorage()
+        }}
+        ></Button>
+      </View>
     </SafeAreaView>
+    </ScrollView>
   );
 };
 
@@ -124,6 +237,9 @@ const styles = StyleSheet.create({
     width: '96%',
     marginBottom: 10,
     alignItems: 'center',
+  },
+  thirdContainer:{
+   backgroundColor:'lightgray'
   },
   fontStyle: {
     fontSize: 20,
