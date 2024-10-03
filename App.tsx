@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,15 +7,39 @@ import {
 } from 'react-native';
 import { Provider } from 'react-redux';
 import { store } from './src/redux/homeRedux/Store';
+import { getDataFromLocalStorage } from './src/storage/AsyncStorage/Asyncstorage';
 //import store from './src/redux/homeRedux/Store';
-import StackNavigator from './src/navigators/StackNavigator/StackNavigator';
+import StackNavigatorLoggedOut from './src/navigators/StackNavigator/StackNavigatorLoggedOut';
+import StackNavigatorLoggedIn from './src/navigators/StackNavigator/StackNavigatorLoggedIn';
 import UserContextProvider from './src/ContextProvider/userContext/UserContextProvider';
 function App(): React.JSX.Element {
-  
+    const[loggedIn,setIsLoggedIn]=useState(true)
+   // let isLogged:any
+  const getAsyncStorageData= async()=>{
+    let isLogged= await getDataFromLocalStorage('IS_LOGGED_IN').then((response)=>{
+      if(response=='Value inside localStorage is blank!!'){
+        setIsLoggedIn(false)
+        return false
+      }else{
+        console.log('INSIDE TRUE CONDITION')
+        setIsLoggedIn(true)
+        return response
+      
+      }
+    }).catch((error)=>{
+        console.log('ERRRRR',error)
+    })
+    
+   }
+  useEffect(()=>{
+    getAsyncStorageData()
+    
+  },[])
   return (
     <Provider store={store}>
     <UserContextProvider>
-    <StackNavigator></StackNavigator>
+      {/* <StackNavigator isLoggedIn={loggedIn}></StackNavigator> */}
+    {loggedIn?(<StackNavigatorLoggedIn></StackNavigatorLoggedIn>):(<StackNavigatorLoggedOut></StackNavigatorLoggedOut>)}
    </UserContextProvider>
    </Provider>
   );

@@ -1,3 +1,3 @@
 export interface LoginScreenTypes{
-    title:string
+    title?:string
 }
