@@ -1,15 +1,35 @@
 import React,{useState} from 'react'
+import { useSelector,useDispatch } from 'react-redux';
+
 import { LoginScreenTypes } from './LoginScreenType'
 import { useNavigation, ParamListBase,  NavigationProp } from '@react-navigation/native';
 import { SafeAreaView,StyleSheet,Text,Button,TextInput, View,Alert } from 'react-native'
 import CheckBox from '@react-native-community/checkbox';
+import { savePassword,saveUserName } from '../../redux/slices/loginSlice';
 import { useUserContext } from '../../ContextProvider/contextHooks/useUserContext';
 const LoginScreen:React.FC<LoginScreenTypes>=()=>{
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const navigation: NavigationProp<ParamListBase> = useNavigation();
-    const [userName,setUserName]=useState('')
-    const [passWord,setPassword]=useState('')
+   // const [userName,setUserName]=useState('')
+   // const [passWord,setPassword]=useState('')
     const { user, setUser } = useUserContext();
+    
+    const dispatch=useDispatch()
+
+    const selector= useSelector((state)=>{
+        console.log('Arzoo test state',state)
+    })
+
+    let userName=useSelector((state:any)=>{
+       return state.loginReducer.userName
+    })
+
+    let passWord= useSelector((state:any)=>{
+       return state.loginReducer.passWord
+    })
+
+  
+
     const doValidation=()=>{
         if(userName===''){
           Alert.alert('Please Enter UserName!!')
@@ -18,7 +38,7 @@ const LoginScreen:React.FC<LoginScreenTypes>=()=>{
             Alert.alert('Please Enter Password')
         }
        else{
-        setUser({ userName: userName, passWord: passWord });
+        //setUser({ userName: userName, passWord: passWord });
         console.log('UserName:::',user?.userName)
         navigation.navigate('DashBoard')
        }
@@ -30,7 +50,9 @@ const LoginScreen:React.FC<LoginScreenTypes>=()=>{
    value={userName}
    placeholder='Please Enter UserName'
    placeholderTextColor='gray'
-   onChangeText={setUserName}
+   onChangeText={(text)=>{
+       dispatch(saveUserName(text))
+   }}
    >
    </TextInput>
    <TextInput
@@ -38,7 +60,9 @@ const LoginScreen:React.FC<LoginScreenTypes>=()=>{
    value={passWord}
    placeholder='Please Enter PassWord'
     placeholderTextColor='gray'
-   onChangeText={setPassword}
+   onChangeText={(text)=>{
+       dispatch(savePassword(text))
+   }}
    >
    </TextInput>
    <View style={{display:'flex',flexDirection:'row',alignSelf:'flex-start',marginLeft:20,
@@ -60,8 +84,10 @@ const LoginScreen:React.FC<LoginScreenTypes>=()=>{
     title='LOGIN'
     onPress={()=>{
     // 
+   // navigation.navigate('DashBoard')
+   // setUseName('Rajveerdddd')
     doValidation()
-    console.log('Checkbox Value:::::',toggleCheckBox)
+    //console.log('Checkbox Value:::::',toggleCheckBox)
 
     }}
     ></Button>
