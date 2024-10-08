@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { Provider } from 'react-redux';
 //import { store } from './src/redux/homeRedux/Store';
-import { store } from './src/redux/store/store';
+import { store } from './src/synchRedux/store/store';
 
 //import store from './src/redux/homeRedux/Store';
 import StackNavigator from './src/navigators/StackNavigator/StackNavigator';

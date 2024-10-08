@@ -5,7 +5,7 @@ import { LoginScreenTypes } from './LoginScreenType'
 import { useNavigation, ParamListBase,  NavigationProp } from '@react-navigation/native';
 import { SafeAreaView,StyleSheet,Text,Button,TextInput, View,Alert } from 'react-native'
 import CheckBox from '@react-native-community/checkbox';
-import { savePassword,saveUserName } from '../../redux/slices/loginSlice';
+import { savePassword,saveUserName } from '../../synchRedux/slices/loginSlice';
 import { useUserContext } from '../../ContextProvider/contextHooks/useUserContext';
 const LoginScreen:React.FC<LoginScreenTypes>=()=>{
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
